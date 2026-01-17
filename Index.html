@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Planner - Marwa Design</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500&family=Indie+Flower&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #fffbfb;
+            --primary-pink: #fff0f5;
+            --accent-soft: #ffe4e9;
+            --text-main: #6d6060;
+            --text-highlight: #d4767c;
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --shadow: 0 8px 25px rgba(214, 118, 124, 0.15);
+            --border-radius: 25px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.8;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        .marwa-logo-bg {
+            position: fixed;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 700px;
+            height: auto;
+            z-index: 0;
+            opacity: 0.15;
+            pointer-events: none;
+            filter: none;
+        }
+
+        .blossom-bg {
+            position: fixed;
+            z-index: 0;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        .blossom-top-right { top: -30px; right: -30px; width: 220px; transform: rotate(15deg); }
+        .blossom-bottom-left { bottom: -20px; left: -20px; width: 270px; transform: scaleX(-1); }
+
+        .floating-petal {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: #ffdee6;
+            border-radius: 150% 0 150% 0;
+            animation: float 10s infinite linear;
+            opacity: 0.7;
+            pointer-events: none;
+            z-index: 1;
+            filter: none;
+            box-shadow: 0 0 5px rgba(255, 200, 220, 0.4);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.7; }
+            80% { opacity: 0.7; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            background: var(--card-bg);
+            padding: 40px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid #fff;
+            backdrop-filter: blur(5px);
+        }
+
+        h1 {
+            font-family: 'Indie Flower', cursive;
+            font-size: 3.5rem;
+            color: var(--text-highlight);
+            margin-bottom: 5px;
+            direction: ltr;
+            font-weight: normal;
+            text-shadow: 2px 2px 4px rgba(212, 118, 124, 0.1);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #9e8e8e;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .date-display {
+            margin-top: 15px;
+            font-weight: 500;
+            color: var(--text-main);
+            font-size: 1.1rem;
+            display: inline-block;
+            border-bottom: 1px solid #ebc3c8;
+            padding-bottom: 2px;
+        }
+
+        .planner-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .planner-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 2.8rem; }
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            position: relative;
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s ease;
+            margin-bottom: 30px;
+            border: 1px solid #ffffff;
+        }
+
+        .card.full-width { grid-column: span 2; }
+        @media (max-width: 768px) { .card.full-width { grid-column: span 1; } }
+
+        .card:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(212, 118, 124, 0.2); }
+
+        .card-title {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            color: var(--text-highlight);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+        }
+
+        .card-title svg { width: 24px; height: 24px; fill: #f2d1d6; }
+
+        .list-container { margin-bottom: 20px; }
+
+        .item-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 14px;
+            border-radius: 15px;
+            border: 1px solid #fff5f7;
+            animation: fadeIn 0.4s ease-out;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .item-row:hover { background: #ffffff; border-color: #ffe4e9; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .item-number {
+            font-family: 'Indie Flower', cursive;
+            font-size: 1.5rem;
+            color: var(--text-highlight);
+            margin-left: 12px;
+            min-width: 30px;
+            opacity: 0.8;
+        }
+
+        .item-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            color: var(--text-main);
+            outline: none;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #ebc3c8;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 5px;
+            transition: color 0.3s;
+            margin-right: 5px;
+        }
+        .delete-btn:hover { color: #d4767c; }
+
+        .add-btn {
+            background: #fdf2f4;
+            color: var(--text-highlight);
+            border: 1px solid #ffe4e9;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Tajawal', sans-serif;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .add-btn:hover { background: #ffebef; transform: translateY(-2px); }
+
+        .habit-icon {
+            width: 22px;
+            height: 22px;
+            margin-left: 12px;
+            stroke: #dcbec1;
+            fill: none;
+            stroke-width: 1.5;
+            transition: stroke 0.3s;
+        }
+
+        .habit-circle {
+            width: 18px;
+            height: 18px;
+            background-color: #fff0f5;
+            border-radius: 50%;
+            margin-left: 12px;
+            flex-shrink: 0;
+        }
+
+        .custom-checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #e8c2c7;
+            border-radius: 50%;
+            margin-left: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .item-row.completed .custom-checkbox {
+            background-color: #d4767c;
+            border-color: #d4767c;
+        }
+
+        .item-row.completed .item-input { text-decoration: line-through; color: #bbb; }
+
+        .svg-check { display: none; color: white; font-size: 12px; }
+        .item-row.completed .svg-check { display: block; }
+
+        .photo-controls { display: flex; justify-content: flex-end; margin-bottom: 15px; }
+
+        .upload-trigger {
+            background: var(--text-highlight);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: opacity 0.3s;
+        }
+        .upload-trigger:hover { opacity: 0.9; }
+
+        #photoInput { display: none; }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            min-height: 100px;
+        }
+
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(212, 118, 124, 0.15);
+            border: 2px solid #fff;
+            transition: transform 0.3s;
+            animation: popIn 0.4s ease-out;
+        }
+
+        .gallery-item:hover { transform: scale(1.03); z-index: 5; }
+
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+
+        .delete-photo-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #d4767c;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .gallery-item:hover .delete-photo-btn { opacity: 1; }
+
+        .empty-gallery-msg {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 30px;
+            color: #dcbec1;
+            border: 2px dashed #ffe4e9;
+            border-radius: 15px;
+        }
+
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .notes-area {
+            width: 100%;
+            height: 200px;
+            border: none;
+            background: repeating-linear-gradient(#fff, #fff 29px, #f9f0f1 30px);
+            line-height: 30px;
+            resize: none;
+            outline: none;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1rem;
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .mood-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .mood-option { cursor: pointer; transition: transform 0.3s; text-align: center; }
+        .mood-option:hover { transform: scale(1.15); }
+        .mood-option input { display: none; }
+
+        .mood-face {
+            width: 45px;
+            height: 45px;
+            stroke: #dcbec1;
+            stroke-width: 1.5;
+            fill: none;
+            stroke-linecap: round;
+            transition: all 0.3s;
+        }
+
+        .mood-option input:checked + .mood-face {
+            stroke: #d4767c;
+            fill: #fff0f5;
+            stroke-width: 2;
+        }
+
+        /* Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #d4767c;
+            color: #fff;
+            text-align: center;
+            border-radius: 50px;
+            padding: 16px;
+            position: fixed;
+            z-index: 10;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 17px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+
+    </style>
+</head>
+<body>
+
+    <img src="https://z-cdn-media.chatglm.cn/files/bdf4f815-edad-4256-acd2-4e64aee32e59.png?auth_key=1868344217-875c07b71c014c5da6ab6b28f81a614c-0-f051cd4aa131cee1f7552ee3574c37fc" alt="Marwa Design" class="marwa-logo-bg">
+
+    <svg class="blossom-bg blossom-top-right" viewBox="0 0 200 200">
+        <path d="M180,20 Q150,50 160,100 T100,150 T40,100 T20,40 T100,10 Z" fill="#ffeef2" opacity="0.6"/>
+        <circle cx="160" cy="50" r="8" fill="#ffdbe8" />
+        <circle cx="40" cy="80" r="12" fill="#ffdbe8" />
+    </svg>
+    
+    <svg class="blossom-bg blossom-bottom-left" viewBox="0 0 300 300">
+        <path d="M10,280 Q50,200 150,250 T280,150" stroke="#ffdbe8" stroke-width="3" fill="none"/>
+        <circle cx="50" cy="250" r="10" fill="#fff0f5"/>
+        <circle cx="150" cy="220" r="15" fill="#fff0f5"/>
+    </svg>
+
+    <div class="container">
+        <header>
+            <h1>Daily Planner</h1>
+            <div class="subtitle">by Marwa design</div>
+            <div class="date-display" id="currentDate"></div>
+        </header>
+
+        <div class="planner-grid">
+            
+            <div class="column">
+                <section class="card">
+                    <h2 class="card-title">
+                        <svg viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#f2d1d6"/></svg>
+                        أهدافي الرئيسية
+                    </h2>
+                    <div id="goals-container" class="list-container"></div>
+                    <button class="add-btn" onclick="addGoal()"><span>+</span> إضافة هدف جديد</button>
+                </section>
+
+                <section class="card">
+                    <h2 class="card-title">
+                        <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M13,7H11V11H7V13H11V17H13V13H17V11H13V7Z" fill="#f2d1d6"/></svg>
+                        مزاج اليوم
+                    </h2>
+                    <div class="mood-container" id="mood-container">
+                        <label class="mood-option">
+                            <input type="radio" name="mood" value="1">
+                            <svg class="mood-face" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20"/><path d="M18,35 Q25,28 32,35" fill="none"/></svg>
+                        </label>
+                        <label class="mood-option">
+                            <input type="radio" name="mood" value="2">
+                            <svg class="mood-face" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20"/><circle cx="18" cy="22" r="2" fill="currentColor"/><circle cx="32" cy="22" r="2" fill="currentColor"/><path d="M20,35 Q25,32 30,35" fill="none"/></svg>
+                        </label>
+                        <label class="mood-option">
+                            <input type="radio" name="mood" value="3" checked>
+                            <svg class="mood-face" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20"/><circle cx="18" cy="22" r="2" fill="currentColor"/><circle cx="32" cy="22" r="2" fill="currentColor"/><line x1="20" y1="35" x2="30" y2="35" /></svg>
+                        </label>
+                        <label class="mood-option">
+                            <input type="radio" name="mood" value="4">
+                            <svg class="mood-face" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20"/><circle cx="18" cy="22" r="2" fill="currentColor"/><circle cx="32" cy="22" r="2" fill="currentColor"/><path d="M20,35 Q25,40 30,35" fill="none"/></svg>
+                        </label>
+                        <label class="mood-option">
+                            <input type="radio" name="mood" value="5">
+                            <svg class="mood-face" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20"/><path d="M15,20 Q18,15 21,20" fill="none"/><path d="M29,20 Q32,15 35,20" fill="none"/><path d="M15,35 Q25,45 35,35" fill="none"/></svg>
+                        </label>
+                    </div>
+                </section>
+            </div>
+
+            <div class="column">
+                <section class="card">
+                    <h2 class="card-title">
+                        <svg viewBox="0 0 24 24"><path d="M12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22C6.47,22 2,17.5 2,12A10,10 0 0,1 12,2M12.5,7V12.25L17,14.92L16.25,16.15L11,13V7H12.5Z" fill="#f2d1d6"/></svg>
+                        تتبع العادات
+                    </h2>
+                    <ul id="habits-container" class="list-container" style="list-style: none;"></ul>
+                    <button class="add-btn" onclick="addHabit()"><span>+</span> إضافة عادة جديدة</button>
+                </section>
+
+                 <section class="card">
+                    <h2 class="card-title">
+                        <svg viewBox="0 0 24 24"><path d="M3 17.25V21H6.75L17.81 9.94L14.06 6.19L3 17.25ZM20.71 7.04C21.1 6.65 21.1 6 20.71 5.63L18.37 3.29C18 2.9 17.35 2.9 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04Z" fill="#f2d1d6"/></svg>
+                        مساحتي الشخصية
+                    </h2>
+                    <textarea class="notes-area" id="notesArea" placeholder="اكتب أفكارك وملاحظاتك هنا..."></textarea>
+                </section>
+            </div>
+
+            <section class="card full-width">
+                <h2 class="card-title">
+                    <svg viewBox="0 0 24 24"><path d="M8.5,13.5L11,16.5L14.5,12L19,18H5M21,19V5C21,3.89 20.1,3 19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19Z" fill="#f2d1d6"/></svg>
+                    مساحة الإلهام واللحظات (يتم حفظها)
+                </h2>
+                
+                <div class="photo-controls">
+                    <input type="file" id="photoInput" multiple accept="image/*">
+                    <button class="upload-trigger" onclick="document.getElementById('photoInput').click()"><span>+ رفع صور</span></button>
+                </div>
+
+                <div class="gallery-grid" id="galleryGrid">
+                    <div class="empty-gallery-msg">اضغط على "رفع صور" لإضافة صور الإلهام أو اللحظات هنا</div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast">تم الحفظ بنجاح!</div>
+
+    <script>
+        // --- Utility: Save/Load from LocalStorage ---
+        function saveData(key, data) {
+            try {
+                localStorage.setItem(key, JSON.stringify(data));
+            } catch (e) {
+                showToast("عذراً، الذاكرة ممتلئة. احذف بعض الصور.");
+            }
+        }
+
+        function loadData(key, defaultValue) {
+            const saved = localStorage.getItem(key);
+            return saved ? JSON.parse(saved) : defaultValue;
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.className = "show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        // --- Date ---
+        const dateElement = document.getElementById('currentDate');
+        dateElement.textContent = new Date().toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+        // --- Petals Animation ---
+        setInterval(() => {
+            const petal = document.createElement('div');
+            petal.className = 'floating-petal';
+            petal.style.left = Math.random() * 100 + 'vw';
+            petal.style.animationDuration = (Math.random() * 5 + 7) + 's'; 
+            petal.style.width = petal.style.height = (Math.random() * 8 + 12) + 'px';
+            document.body.appendChild(petal);
+            setTimeout(() => petal.remove(), 12000);
+        }, 1000);
+
+        // --- Goals Logic (Saved) ---
+        const goalsContainer = document.getElementById('goals-container');
+        let goalsData = loadData('marwa_goals', []);
+        let goalCount = 0;
+
+        function renderGoals() {
+            goalsContainer.innerHTML = '';
+            goalsData.forEach((goalText, index) => {
+                const div = document.createElement('div');
+                div.className = 'item-row';
+                div.innerHTML = `
+                    <span class="item-number">${index + 1}</span>
+                    <input type="text" class="item-input" placeholder="أهم شيء يجب إنجازه اليوم..." value="${goalText}" oninput="updateGoal(${index}, this.value)">
+                    <button class="delete-btn" onclick="deleteGoal(${index})">✕</button>
+                `;
+                goalsContainer.appendChild(div);
+            });
+            goalCount = goalsData.length;
+        }
+
+        function addGoal() {
+            goalsData.push(''); // Add empty goal
+            saveData('marwa_goals', goalsData);
+            renderGoals();
+        }
+
+        function updateGoal(index, value) {
+            goalsData[index] = value;
+            saveData('marwa_goals', goalsData);
+        }
+
+        function deleteGoal(index) {
+            goalsData.splice(index, 1);
+            saveData('marwa_goals', goalsData);
+            renderGoals();
+        }
+
+        // --- Habits Logic (Saved) ---
+        const habitsContainer = document.getElementById('habits-container');
+        let habitsData = loadData('marwa_habits', []);
+        
+        const icons = {
+            water: '<svg class="habit-icon" viewBox="0 0 24 24"><path d="M12,22C14.74,22 17.5,20.53 17.5,17.5C17.5,15.26 15.42,13.5 13.67,11.33C12.61,10 12,8.6 12,8.6C12,8.6 11.39,10 10.33,11.33C8.58,13.5 6.5,15.26 6.5,17.5C6.5,20.53 9.26,22 12,22Z" fill="none"/></svg>',
+            book: '<svg class="habit-icon" viewBox="0 0 24 24"><path d="M19,2L14,6.5V17.5L19,13V2M6.5,5C4.55,5 2.45,5.4 1,6.5V21.16C1,21.41 1.25,21.66 1.5,21.66C1.6,21.66 1.65,21.59 1.75,21.59C3.1,20.94 5.05,20.5 6.5,20.5C8.45,20.5 10.55,20.9 12,22C13.35,20.9 15.8,20.5 17.5,20.5C19.15,20.5 20.85,20.81 22.25,21.56C22.35,21.61 22.4,21.59 22.5,21.59C22.75,21.59 23,21.34 23,21.09V6.5C22.4,6.05 21.75,5.75 21,5.5V19C19.9,18.65 18.7,18.5 17.5,18.5C15.8,18.5 13.35,18.9 12,20V6.5C10.55,5.4 8.45,5 6.5,5Z" fill="none"/></svg>',
+            moon: '<svg class="habit-icon" viewBox="0 0 24 24"><path d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C7.79,7.9 8.75,10.87 10.95,13.06C13.14,15.26 16.1,16.22 18.97,15.95Z" fill="none"/></svg>'
+        };
+
+        function renderHabits() {
+            habitsContainer.innerHTML = '';
+            habitsData.forEach((habit, index) => {
+                const li = document.createElement('li');
+                li.className = 'item-row' + (habit.completed ? ' completed' : '');
+                // Determine icon based on text match or default
+                let iconHtml = habit.iconType && icons[habit.iconType] ? icons[habit.iconType] : '<div class="habit-circle"></div>';
+                
+                li.innerHTML = `
+                    <div class="custom-checkbox" onclick="toggleHabit(${index})">
+                        <span class="svg-check">✓</span>
+                    </div>
+                    ${iconHtml}
+                    <input type="text" class="item-input" placeholder="عادة جديدة..." value="${habit.text}" oninput="updateHabitText(${index}, this.value)">
+                    <button class="delete-btn" onclick="deleteHabit(${index})">✕</button>
+                `;
+                habitsContainer.appendChild(li);
+            });
+        }
+
+        function addHabit() {
+            habitsData.push({ text: '', completed: false, iconType: null });
+            saveData('marwa_habits', habitsData);
+            renderHabits();
+        }
+
+        function toggleHabit(index) {
+            habitsData[index].completed = !habitsData[index].completed;
+            saveData('marwa_habits', habitsData);
+            renderHabits();
+        }
+
+        function updateHabitText(index, value) {
+            habitsData[index].text = value;
+            saveData('marwa_habits', habitsData);
+        }
+
+        function deleteHabit(index) {
+            habitsData.splice(index, 1);
+            saveData('marwa_habits', habitsData);
+            renderHabits();
+        }
+
+        // --- Mood Logic (Saved) ---
+        const moodInputs = document.querySelectorAll('input[name="mood"]');
+        const savedMood = loadData('marwa_mood', '3');
+        if(savedMood) {
+            const checkedInput = document.querySelector(`input[name="mood"][value="${savedMood}"]`);
+            if(checkedInput) checkedInput.checked = true;
+        }
+
+        moodInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                saveData('marwa_mood', this.value);
+            });
+        });
+
+        // --- Notes Logic (Saved) ---
+        const notesArea = document.getElementById('notesArea');
+        notesArea.value = loadData('marwa_notes', '');
+        notesArea.addEventListener('input', function() {
+            saveData('marwa_notes', this.value);
+        });
+
+        // --- Gallery Logic (Saved & Compressed) ---
+        const photoInput = document.getElementById('photoInput');
+        const galleryGrid = document.getElementById('galleryGrid');
+        let galleryData = loadData('marwa_gallery', []);
+
+        function renderGallery() {
+            galleryGrid.innerHTML = '';
+            if (galleryData.length === 0) {
+                galleryGrid.innerHTML = '<div class="empty-gallery-msg">اضغط على "رفع صور" لإضافة صور الإلهام أو اللحظات هنا</div>';
+                return;
+            }
+            galleryData.forEach((imgData, index) => {
+                const div = document.createElement('div');
+                div.className = 'gallery-item';
+                div.innerHTML = `
+                    <img src="${imgData}" alt="Gallery Image">
+                    <button class="delete-photo-btn" onclick="deletePhoto(${index})">✕</button>
+                `;
+                galleryGrid.appendChild(div);
+            });
+        }
+
+        // Image Compression Function
+        function processAndSaveImage(file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Resize to max 400x400 to save space
+                    const MAX_SIZE = 400;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_SIZE) {
+                            height *= MAX_SIZE / width;
+                            width = MAX_SIZE;
+                        }
+                    } else {
+                        if (height > MAX_SIZE) {
+                            width *= MAX_SIZE / height;
+                            height = MAX_SIZE;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Convert to compressed JPG
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    
+                    // Save
+                    galleryData.push(dataUrl);
+                    try {
+                        saveData('marwa_gallery', galleryData);
+                        renderGallery();
+                        showToast("تم حفظ الصورة");
+                    } catch (e) {
+                        galleryData.pop(); // Remove if failed
+                        showToast("الذاكرة ممتلئة! احذف بعض الصور القديمة.");
+                    }
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        photoInput.addEventListener('change', function(event) {
+            const files = event.target.files;
+            Array.from(files).forEach(file => {
+                processAndSaveImage(file);
+            });
+            photoInput.value = ''; // Reset input
+        });
+
+        function deletePhoto(index) {
+            galleryData.splice(index, 1);
+            saveData('marwa_gallery', galleryData);
+            renderGallery();
+        }
+
+        // --- Initialization ---
+        renderGoals();
+        renderHabits();
+        renderGallery();
+        
+        // Init defaults if empty
+        if (goalsData.length === 0) {
+            addGoal(); addGoal(); addGoal();
+        }
+        if (habitsData.length === 0) {
+            habitsData = [
+                { text: 'شرب الماء (8 أكواب)', completed: false, iconType: 'water' },
+                { text: 'القراءة (30 دقيقة)', completed: false, iconType: 'book' },
+                { text: 'النوم المبكر', completed: false, iconType: 'moon' }
+            ];
+            saveData('marwa_habits', habitsData);
+            renderHabits();
+        }
+
+    </script>
+</body>
+</html>
